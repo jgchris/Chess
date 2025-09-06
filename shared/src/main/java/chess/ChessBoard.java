@@ -12,6 +12,9 @@ public class ChessBoard {
         
     }
 
+    //[row][col]
+    ChessPiece[][] board= new ChessPiece[8][8];
+
     /**
      * Adds a chess piece to the chessboard
      *
@@ -19,7 +22,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        throw new RuntimeException("Not implemented");
+        board[position.getRow()-1][position.getColumn()-1] = piece;
     }
 
     /**
@@ -30,7 +33,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+        return board[position.getRow()-1][position.getColumn()-1];
     }
 
     /**
@@ -38,6 +41,49 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        ChessPiece[] nullRow = new ChessPiece[8];
+
+        board = new ChessPiece[][]{
+                createStartRow(ChessGame.TeamColor.WHITE),
+                createPawnRow(ChessGame.TeamColor.WHITE),
+                nullRow,
+                nullRow,
+                nullRow,
+                nullRow,
+                createPawnRow(ChessGame.TeamColor.BLACK),
+                createStartRow(ChessGame.TeamColor.BLACK)
+        };
+
+
+    }
+    private ChessPiece[] createPawnRow(ChessGame.TeamColor color) {
+        ChessPiece[] startRow = new ChessPiece[8];
+
+        for (int i=0; i<8;i++) {
+            startRow[i] = new ChessPiece(color, ChessPiece.PieceType.PAWN);
+        }
+
+        return startRow;
+    }
+
+    private ChessPiece[] createStartRow(ChessGame.TeamColor color) {
+        ChessPiece.PieceType[] defaultOrder = {
+                ChessPiece.PieceType.ROOK,
+                ChessPiece.PieceType.KNIGHT,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.QUEEN,
+                ChessPiece.PieceType.KING,
+                ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.KNIGHT,
+                ChessPiece.PieceType.ROOK
+        };
+
+        ChessPiece[] startRow = new ChessPiece[8];
+
+        for (int i=0; i<8;i++) {
+            startRow[i] = new ChessPiece(color, defaultOrder[i]);
+        }
+
+        return startRow;
     }
 }
