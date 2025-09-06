@@ -93,13 +93,11 @@ public class ChessPiece {
         legalMoves = new HashSet<ChessMove>();
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
-        System.out.println("hello");
 
         for(int[] a : directions) {
             int x = a[0];
             int y = a[1];
             for(int i = 1; i< 8; i++) {
-                System.out.println("hello" + i);
 
 
                 ChessPosition posToCheck;
@@ -128,10 +126,51 @@ public class ChessPiece {
         throw new RuntimeException("Not Implemented");
     }
     private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not Implemented");
+        int[][] directions = {
+                {1,0},
+                {-1,0},
+                {0,1},
+                {0,-1}
+        };
+        HashSet<ChessMove> legalMoves;
+        legalMoves = new HashSet<ChessMove>();
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        for(int[] a : directions) {
+            int x = a[0];
+            int y = a[1];
+            for(int i = 1; i< 8; i++) {
+
+
+                ChessPosition posToCheck;
+                posToCheck = new ChessPosition(row + i*x, col + i*y);
+                if((1 > posToCheck.getRow()) ||
+                        (posToCheck.getRow() > 8) ||
+                        (1 > posToCheck.getColumn()) ||
+                        (posToCheck.getColumn() > 8)){
+                    break;
+                }
+                ChessPiece pieceAtPos = board.getPiece(posToCheck);
+                if(pieceAtPos == null) {
+                    legalMoves.add(new ChessMove(myPosition, posToCheck, null));
+                    continue;
+                }
+                if(pieceAtPos.getTeamColor() != color)
+                    legalMoves.add(new ChessMove(myPosition, posToCheck, null));
+                break;
+            }
+
+        }
+
+        return legalMoves;
     }
     private Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not Implemented");
+        Collection<ChessMove> legalMoves;
+        legalMoves = bishopMoves(board, myPosition);
+        legalMoves.addAll(rookMoves(board,myPosition));
+        return legalMoves;
+
     }
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not Implemented");
