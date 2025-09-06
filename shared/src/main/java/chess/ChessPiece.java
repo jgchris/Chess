@@ -254,14 +254,61 @@ public class ChessPiece {
         return legalMoves;
     }
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not Implemented");
-        //White pawns can only add, Black pawns can only subtract row position
+        HashSet<ChessMove> legalMoves;
+        legalMoves = new HashSet<ChessMove>();
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        int y = (color == ChessGame.TeamColor.WHITE) ? 1 : -1;
         //Always check square ahead, if null, add
-        //Check square +-1 col ahead, if enemy piece, add
+        ChessPosition posToCheck;
+        posToCheck = new ChessPosition(row, col + y);
+        ChessPiece pieceAtPos = board.getPiece(posToCheck);
+        if(pieceAtPos == null) {
+            if(col+y == 8 || col+y == 1){
+                legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.QUEEN));
+                legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.ROOK));
+                legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.KNIGHT));
+                legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.BISHOP));
+            } else {
+                legalMoves.add(new ChessMove(myPosition, posToCheck, null));
+            }
+            if((row == 2 && color ==ChessGame.TeamColor.WHITE) || (row == 7 && color ==ChessGame.TeamColor.BLACK)){
+                posToCheck = new ChessPosition(row, col + 2*y);
+                pieceAtPos = board.getPiece(posToCheck);
+                if(pieceAtPos == null) {
+                    legalMoves.add(new ChessMove(myPosition, posToCheck, null));
+                }
+
+                }
+            }
+        int[] directions = {1,-1};
+        for(int x : directions){
+            posToCheck = new ChessPosition(row + x, col + y);
+            pieceAtPos = board.getPiece(posToCheck);
+            if(pieceAtPos != null && pieceAtPos.getTeamColor() != color) {
+                if(col+y == 8 || col+y == 1){
+                    legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.QUEEN));
+                    legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.ROOK));
+                    legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.KNIGHT));
+                    legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.BISHOP));
+                } else {
+                    legalMoves.add(new ChessMove(myPosition, posToCheck, null));
+                }
+            }
+
+
+
+        }
+
+
+
+
         //White 2 Black 7: Check 2 moves ahead
-        //White 7 Black 2: Add all possible promotions (Q B R N)
 
         //TODO: Implement en passant
+
+        return legalMoves;
     }
 
 }
