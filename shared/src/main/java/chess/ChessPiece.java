@@ -262,10 +262,10 @@ public class ChessPiece {
         int y = (color == ChessGame.TeamColor.WHITE) ? 1 : -1;
         //Always check square ahead, if null, add
         ChessPosition posToCheck;
-        posToCheck = new ChessPosition(row, col + y);
+        posToCheck = new ChessPosition(row+y, col);
         ChessPiece pieceAtPos = board.getPiece(posToCheck);
         if(pieceAtPos == null) {
-            if(col+y == 8 || col+y == 1){
+            if(row+y == 8 || row+y == 1){
                 legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.QUEEN));
                 legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.ROOK));
                 legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.KNIGHT));
@@ -274,7 +274,7 @@ public class ChessPiece {
                 legalMoves.add(new ChessMove(myPosition, posToCheck, null));
             }
             if((row == 2 && color ==ChessGame.TeamColor.WHITE) || (row == 7 && color ==ChessGame.TeamColor.BLACK)){
-                posToCheck = new ChessPosition(row, col + 2*y);
+                posToCheck = new ChessPosition(row+2*y, col);
                 pieceAtPos = board.getPiece(posToCheck);
                 if(pieceAtPos == null) {
                     legalMoves.add(new ChessMove(myPosition, posToCheck, null));
@@ -284,10 +284,13 @@ public class ChessPiece {
             }
         int[] directions = {1,-1};
         for(int x : directions){
-            posToCheck = new ChessPosition(row + x, col + y);
+            if(col+x > 8 || col+x < 1){
+                continue;
+            }
+            posToCheck = new ChessPosition(row + y, col + x);
             pieceAtPos = board.getPiece(posToCheck);
             if(pieceAtPos != null && pieceAtPos.getTeamColor() != color) {
-                if(col+y == 8 || col+y == 1){
+                if(row+y == 8 || row+y == 1){
                     legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.QUEEN));
                     legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.ROOK));
                     legalMoves.add(new ChessMove(myPosition, posToCheck, PieceType.KNIGHT));
@@ -304,7 +307,6 @@ public class ChessPiece {
 
 
 
-        //White 2 Black 7: Check 2 moves ahead
 
         //TODO: Implement en passant
 
