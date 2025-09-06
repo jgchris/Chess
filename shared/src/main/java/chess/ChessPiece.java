@@ -123,7 +123,45 @@ public class ChessPiece {
         return legalMoves;
     }
     private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not Implemented");
+        int[][] directions = {
+                {1,2},
+                {-1,2},
+                {2,1},
+                {2,-1},
+                {1,-2},
+                {-1,-2},
+                {-2,-1},
+                {-2,1}
+        };
+        HashSet<ChessMove> legalMoves;
+        legalMoves = new HashSet<ChessMove>();
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        for(int[] a : directions) {
+            int x = a[0];
+            int y = a[1];
+
+
+            ChessPosition posToCheck;
+            posToCheck = new ChessPosition(row + x, col + y);
+            if((1 > posToCheck.getRow()) ||
+                    (posToCheck.getRow() > 8) ||
+                    (1 > posToCheck.getColumn()) ||
+                    (posToCheck.getColumn() > 8)){
+                continue;
+            }
+            ChessPiece pieceAtPos = board.getPiece(posToCheck);
+            if(pieceAtPos == null) {
+                legalMoves.add(new ChessMove(myPosition, posToCheck, null));
+                continue;
+            }
+            if(pieceAtPos.getTeamColor() != color)
+                legalMoves.add(new ChessMove(myPosition, posToCheck, null));
+
+        }
+        return legalMoves;
+
     }
     private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
         int[][] directions = {
@@ -173,7 +211,45 @@ public class ChessPiece {
 
     }
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not Implemented");
+        int[][] directions = {
+                {1,0},
+                {-1,0},
+                {0,1},
+                {0,-1},
+                {1,1},
+                {-1,1},
+                {1,-1},
+                {-1,-1}
+        };
+        HashSet<ChessMove> legalMoves;
+        legalMoves = new HashSet<ChessMove>();
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+
+        for(int[] a : directions) {
+            int x = a[0];
+            int y = a[1];
+
+
+            ChessPosition posToCheck;
+            posToCheck = new ChessPosition(row + x, col + y);
+            if((1 > posToCheck.getRow()) ||
+                    (posToCheck.getRow() > 8) ||
+                    (1 > posToCheck.getColumn()) ||
+                    (posToCheck.getColumn() > 8)){
+                continue;
+            }
+            ChessPiece pieceAtPos = board.getPiece(posToCheck);
+            if(pieceAtPos == null) {
+                legalMoves.add(new ChessMove(myPosition, posToCheck, null));
+                continue;
+            }
+            if(pieceAtPos.getTeamColor() != color)
+                legalMoves.add(new ChessMove(myPosition, posToCheck, null));
+
+        }
+
+        return legalMoves;
     }
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not Implemented");
