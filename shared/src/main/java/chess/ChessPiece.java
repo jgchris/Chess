@@ -93,16 +93,20 @@ public class ChessPiece {
         legalMoves = new HashSet<ChessMove>();
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
+        System.out.println("hello");
 
         for(int[] a : directions) {
             int x = a[0];
             int y = a[1];
-            for(int i = 0; i< 8; i++) {
+            for(int i = 1; i< 8; i++) {
+                System.out.println("hello" + i);
+
+
                 ChessPosition posToCheck;
                 posToCheck = new ChessPosition(row + i*x, col + i*y);
-                if((0 > posToCheck.getRow()) ||
+                if((1 > posToCheck.getRow()) ||
                         (posToCheck.getRow() > 8) ||
-                (0 > posToCheck.getColumn()) ||
+                (1 > posToCheck.getColumn()) ||
                         (posToCheck.getColumn() > 8)){
                     break;
                 }
