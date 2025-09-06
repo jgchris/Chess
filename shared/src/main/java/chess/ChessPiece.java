@@ -249,10 +249,19 @@ public class ChessPiece {
 
         }
 
+        //TODO: Implement castling
+
         return legalMoves;
     }
     private Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not Implemented");
+        //White pawns can only add, Black pawns can only subtract row position
+        //Always check square ahead, if null, add
+        //Check square +-1 col ahead, if enemy piece, add
+        //White 2 Black 7: Check 2 moves ahead
+        //White 7 Black 2: Add all possible promotions (Q B R N)
+
+        //TODO: Implement en passant
     }
 
 }
