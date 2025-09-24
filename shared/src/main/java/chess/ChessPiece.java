@@ -142,20 +142,9 @@ public class ChessPiece {
         ChessPiece possiblePiece = board.getPiece(attemptPos);
 
         if(possiblePiece == null) {
-            ChessMove move;
-            if (attemptY == 8 || attemptY == 1) {
-                move = new ChessMove(myPosition, attemptPos, PieceType.BISHOP);
-                moves.add(move);
-                move = new ChessMove(myPosition, attemptPos, PieceType.QUEEN);
-                moves.add(move);
-                move = new ChessMove(myPosition, attemptPos, PieceType.KNIGHT);
-                moves.add(move);
-                move = new ChessMove(myPosition, attemptPos, PieceType.ROOK);
-                moves.add(move);
-            } else {
-                move = new ChessMove(myPosition, attemptPos, null);
-                moves.add(move);
-            }
+            Collection<ChessMove> promotionOptions = calculatePromotionOptions(myPosition, attemptPos);
+            moves.addAll(promotionOptions);
+
 
 
             if ((y == 2 && this.pieceColor == ChessGame.TeamColor.WHITE) || (y == 7 && this.pieceColor == ChessGame.TeamColor.BLACK)) {
@@ -163,7 +152,7 @@ public class ChessPiece {
                 attemptPos = new ChessPosition(attemptY, attemptX);
                 possiblePiece = board.getPiece(attemptPos);
                 if(possiblePiece == null) {
-                    move = new ChessMove(myPosition, attemptPos, null);
+                    chess.ChessMove move = new ChessMove(myPosition, attemptPos, null);
                     moves.add(move);
                 }
 
@@ -181,25 +170,33 @@ public class ChessPiece {
             attemptPos = new ChessPosition(attemptY, attemptX);
             possiblePiece = board.getPiece(attemptPos);
             if (possiblePiece != null && possiblePiece.pieceColor != this.pieceColor) {
-                    ChessMove move;
-                    if (attemptY == 8 || attemptY == 1) {
-                        move = new ChessMove(myPosition, attemptPos, PieceType.BISHOP);
-                        moves.add(move);
-                        move = new ChessMove(myPosition, attemptPos, PieceType.QUEEN);
-                        moves.add(move);
-                        move = new ChessMove(myPosition, attemptPos, PieceType.KNIGHT);
-                        moves.add(move);
-                        move = new ChessMove(myPosition, attemptPos, PieceType.ROOK);
-                        moves.add(move);
-                    } else {
-                        move = new ChessMove(myPosition, attemptPos, null);
-                        moves.add(move);
-                    }
+                Collection<ChessMove> promotionOptions = calculatePromotionOptions(myPosition, attemptPos);
+                moves.addAll(promotionOptions);
 
             }
         }
 
 
+        return moves;
+    }
+
+    private Collection<ChessMove> calculatePromotionOptions(ChessPosition myPosition, ChessPosition endPosition){
+        int row = endPosition.getRow();
+        Collection<ChessMove> moves = new HashSet<ChessMove>();
+        ChessMove move;
+        if (row == 8 || row == 1) {
+            move = new ChessMove(myPosition, endPosition, PieceType.BISHOP);
+            moves.add(move);
+            move = new ChessMove(myPosition, endPosition, PieceType.QUEEN);
+            moves.add(move);
+            move = new ChessMove(myPosition, endPosition, PieceType.KNIGHT);
+            moves.add(move);
+            move = new ChessMove(myPosition, endPosition, PieceType.ROOK);
+            moves.add(move);
+        } else {
+            move = new ChessMove(myPosition, endPosition, null);
+            moves.add(move);
+        }
         return moves;
     }
 
