@@ -14,8 +14,8 @@ import java.util.Objects;
  */
 public class ChessPiece {
 
-    ChessGame.TeamColor pieceColor;
-    ChessPiece.PieceType type;
+    final private ChessGame.TeamColor pieceColor;
+    final private ChessPiece.PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
@@ -205,11 +205,11 @@ public class ChessPiece {
 
     private Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition myPosition, int[][] directions, boolean shouldContinue) {
        Collection<ChessMove> moves = new HashSet<ChessMove>();
-       int range = shouldContinue ? 8 : 2;
+       int range = shouldContinue ? 7 : 1;
        int x = myPosition.getColumn();
        int y = myPosition.getRow();
        for(int[] direction: directions) {
-           for(int i = 1; i < range; i++){
+           for(int i = 1; i <= range; i++){
                int attemptX = x + i * direction[0];
                int attemptY = y + i * direction[1];
 
