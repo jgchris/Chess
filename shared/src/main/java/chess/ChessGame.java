@@ -89,19 +89,16 @@ public class ChessGame {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
         TeamColor playerColor = piece.getTeamColor();
+        ChessPiece originalPiece = board.getPiece(end);
         board.addPiece(start, null);
         board.addPiece(end, piece);
 
         if (isInCheck(playerColor)){
-            System.out.println("CHECK! if you do that lol");
-            System.out.println(end);
             legal = false;
         }
 
         board.addPiece(start, piece);
-        board.addPiece(end, null);
-        System.out.println("This is fine");
-        System.out.println(end);
+        board.addPiece(end, originalPiece);
         return legal;
     }
 
@@ -159,16 +156,12 @@ public class ChessGame {
                 break;
             }
         }
-        System.out.println("King pos:");
-        System.out.println(kingPosition);
 
         for(ChessPosition pos: otherPieces){
             ChessPiece piece = board.getPiece(pos);
             var vision = piece.pieceMoves(board, pos);
             for(ChessMove possibleAttack : vision){
                 ChessPosition end = possibleAttack.getEndPosition();
-                System.out.println("checking:");
-                System.out.println(end);
                 if(end.equals(kingPosition)){
                     return true;
                 }
@@ -199,7 +192,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return !hasLegalMoves(teamColor) && isInCheck(teamColor);
     }
 
     /**
@@ -210,7 +203,18 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return !hasLegalMoves(teamColor) && !isInCheck(teamColor);
+    }
+
+    private boolean hasLegalMoves(TeamColor teamColor) {
+        Collection<ChessPosition> pieces = getPiecesOfColor(teamColor);
+        for(ChessPosition piece : pieces) {
+            Collection<ChessMove> legalMoves = validMoves(piece);
+            if(!legalMoves.isEmpty()){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
