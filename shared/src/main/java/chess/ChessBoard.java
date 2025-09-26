@@ -49,10 +49,10 @@ public class ChessBoard {
         board = new ChessPiece[][]{
                 createStartRow(ChessGame.TeamColor.WHITE),
                 createPawnRow(ChessGame.TeamColor.WHITE),
-                nullRow,
-                nullRow,
-                nullRow,
-                nullRow,
+                nullRow.clone(),
+                nullRow.clone(),
+                nullRow.clone(),
+                nullRow.clone(),
                 createPawnRow(ChessGame.TeamColor.BLACK),
                 createStartRow(ChessGame.TeamColor.BLACK)
         };
