@@ -150,7 +150,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         Collection<ChessPosition> selfPieces = getPiecesOfColor(teamColor);
-        Collection<ChessPosition> otherPieces = getPiecesOfColor(teamTurn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
+        Collection<ChessPosition> otherPieces = getPiecesOfColor(teamColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
         ChessPosition kingPosition = null;
         for(ChessPosition pos: selfPieces){
             ChessPiece piece = board.getPiece(pos);
@@ -159,12 +159,16 @@ public class ChessGame {
                 break;
             }
         }
+        System.out.println("King pos:");
+        System.out.println(kingPosition);
 
         for(ChessPosition pos: otherPieces){
             ChessPiece piece = board.getPiece(pos);
             var vision = piece.pieceMoves(board, pos);
             for(ChessMove possibleAttack : vision){
                 ChessPosition end = possibleAttack.getEndPosition();
+                System.out.println("checking:");
+                System.out.println(end);
                 if(end.equals(kingPosition)){
                     return true;
                 }
@@ -173,13 +177,13 @@ public class ChessGame {
         return false;
 
     }
-    private Collection<ChessPosition> getPiecesOfColor(TeamColor teamColor){
+    private Collection<ChessPosition> getPiecesOfColor(TeamColor color){
         Collection<ChessPosition> pieces = new HashSet<>();
         for(int i = 1; i<=8; i++){
             for(int j=1; j<=8; j++){
                 ChessPosition position = new ChessPosition(i,j);
                 ChessPiece possiblePiece = board.getPiece(position);
-                if(possiblePiece != null && possiblePiece.getTeamColor() == teamColor){
+                if(possiblePiece != null && possiblePiece.getTeamColor() == color){
                     pieces.add(position);
                 }
 
