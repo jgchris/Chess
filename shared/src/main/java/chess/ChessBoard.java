@@ -52,7 +52,7 @@ public class ChessBoard {
                 nullRow.clone(),
                 nullRow.clone(),
                 nullRow.clone(),
-                nullRow.clone(),
+                nullRow,
                 createPawnRow(ChessGame.TeamColor.BLACK),
                 createStartRow(ChessGame.TeamColor.BLACK)
         };
