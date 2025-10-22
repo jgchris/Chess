@@ -133,6 +133,56 @@ public class UnitTests {
         }
     }
 
+    @Test
+    public void listGamesFail() {
+        AuthData auth = new AuthData("Token", null);
+        Assertions.assertThrows(DataAccessException.class, () -> {
+            service.listGames(auth);
+        });
+    }
+
+    @Test
+    public void createGameSuccess() {
+        AuthData auth = registerUser();
+        int id = makeGame(auth);
+        Assertions.assertEquals(1, id);
+    }
+
+    @Test
+    public void createGameFail() {
+        AuthData auth = new AuthData("Token", null);
+        Assertions.assertThrows(DataAccessException.class, () -> {
+            service.createGame(auth, "game");
+        });
+    }
+
+    @Test
+    public void joinGameSuccess() {
+        AuthData auth = registerUser();
+        int id = makeGame(auth);
+        try {
+            service.joinGame(auth, "WHITE", id);
+        } catch (DataAccessException e) {
+            Assertions.fail("Failed to join game");
+        }
+    }
+
+    @Test
+    public void joinGameFail() {
+        AuthData auth = registerUser();
+        int id = makeGame(auth);
+        try {
+            service.joinGame(auth, "WHITE", id);
+        } catch (DataAccessException e) {
+            Assertions.fail("Failed to join game");
+        }
+        Assertions.assertThrows(DataAccessException.class, () -> {
+            service.joinGame(auth, "WHITE", id);
+        });
+
+
+    }
+
 
 
 

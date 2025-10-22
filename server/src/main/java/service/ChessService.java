@@ -23,6 +23,7 @@ public class ChessService {
         authDAO.clear();
         gameDAO.clear();
         userDAO.clear();
+        currentGameId = 1;
     }
     public AuthData register(UserData user) throws DataAccessException {
         userDAO.createUser(user);
