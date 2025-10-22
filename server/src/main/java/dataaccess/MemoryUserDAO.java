@@ -32,7 +32,12 @@ public class MemoryUserDAO implements UserDAO {
 
     @Override
     public void verifyUser(String username, String password) throws DataAccessException {
-        UserData user = getUser(username);
+        UserData user;
+        try {
+            user = getUser(username);
+        } catch(DataAccessException e) {
+            throw new DataAccessException("Incorrect username or password");
+        }
         if(!password.equals(user.password())){
             throw new DataAccessException("Incorrect username or password");
         }

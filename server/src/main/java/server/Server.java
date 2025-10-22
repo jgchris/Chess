@@ -4,12 +4,14 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.*;
 import io.javalin.http.Context;
+import model.JoinRequest;
 import model.UserData;
 import model.GameData;
 import model.AuthData;
 import service.ChessService;
 
 import java.security.Provider;
+import java.util.Objects;
 
 public class Server {
 
@@ -37,6 +39,10 @@ public class Server {
 
     private void register(Context context) throws DataAccessException {
         UserData user = getBodyObject(context, UserData.class);
+        if(user.username() == null || user.password() == null || user.email() == null) {
+            handle400(context);
+            return;
+        }
         AuthData auth = service.register(user);
 
         String json = new Gson().toJson(auth);
@@ -45,6 +51,10 @@ public class Server {
 
     private void login(Context context) throws DataAccessException {
         UserData user = getBodyObject(context, UserData.class);
+        if(user.username() == null || user.password() == null) {
+            handle400(context);
+            return;
+        }
         AuthData auth = service.login(user);
 
         String json = new Gson().toJson(auth);
@@ -75,6 +85,10 @@ public class Server {
     private void createGame(Context context) throws DataAccessException {
         AuthData auth = new AuthData(context.header("authorization"), null);
         GameData game = getBodyObject(context, GameData.class);
+        if(game.gameName() == null) {
+            handle400(context);
+            return;
+        }
 
         int id = service.createGame(auth, game.gameName());
 
@@ -85,14 +99,68 @@ public class Server {
 
     private void joinGame(Context context) throws DataAccessException {
         AuthData auth = new AuthData(context.header("authorization"), null);
+        JoinRequest request = getBodyObject(context, JoinRequest.class);
+        if((request.playerColor() == null) || (request.gameID() == 0)) {
+            handle400(context);
+            return;
+        }
+
+        service.joinGame(auth, request.playerColor(), request.gameID());
 
 
 
     }
 
     private void exceptionHandler(Exception e, Context context) {
+        if(!(e instanceof DataAccessException)){
+            handle500(context, e.getMessage());
+            return;
+        }
+        if(Objects.equals(e.getMessage(), "Not authorized") ||
+                Objects.equals(e.getMessage(), "Auth token not found") ||
+                Objects.equals(e.getMessage(), "Incorrect username or password")) {
+            handle401(context);
+            return;
+
+        }
+        if(Objects.equals(e.getMessage(), "playerColor must be WHITE or BLACK")) {
+            handle400(context);
+            return;
+        }
+        handle403(context);
 
     }
+
+    private void handle400(Context context) {
+        context.status(400);
+        String json = "{\"message\": \"Error: bad request\"}";
+        context.json(json);
+
+    }
+
+    private void handle401(Context context) {
+        context.status(401);
+        String json = "{\"message\": \"Error: unauthorized\"}";
+        context.json(json);
+
+    }
+
+    private void handle403(Context context) {
+        context.status(403);
+        String json = "{\"message\": \"Error: already taken\"}";
+        context.json(json);
+
+    }
+
+    private void handle500(Context context, String e) {
+        context.status(500);
+        String json = "{\"message\": \"Error: " + e + "\"}";
+        context.json(json);
+
+    }
+
+
+
 
     private static <T> T getBodyObject(Context context, Class<T> clazz) {
         var bodyObject = new Gson().fromJson(context.body(), clazz);
