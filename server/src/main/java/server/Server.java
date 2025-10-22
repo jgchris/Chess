@@ -9,6 +9,8 @@ import model.GameData;
 import model.AuthData;
 import service.ChessService;
 
+import java.security.Provider;
+
 public class Server {
 
     private final Javalin javalin;
@@ -50,33 +52,39 @@ public class Server {
     }
 
     private void logout(Context context) throws DataAccessException {
-        AuthData auth = new Gson().fromJson(context.header("authorization"), AuthData.class);
+        AuthData auth = new AuthData(context.header("authorization"), null);
 
         service.logout(auth);
 
     }
 
     private void listGames(Context context) throws DataAccessException {
-        AuthData auth = new Gson().fromJson(context.header("authorization"), AuthData.class);
+        AuthData auth = new AuthData(context.header("authorization"), null);
 
         var games = service.listGames(auth);
 
-        //TODO: this needs to return a class I can serialize and send back
+        String allGames = new Gson().toJson(games);
+
+
+        String json = "{\"games\":" + allGames + "}";
+        context.json(json);
+
 
     }
 
     private void createGame(Context context) throws DataAccessException {
-        AuthData auth = new Gson().fromJson(context.header("authorization"), AuthData.class);
+        AuthData auth = new AuthData(context.header("authorization"), null);
         GameData game = getBodyObject(context, GameData.class);
 
         int id = service.createGame(auth, game.gameName());
 
-        //TODO: turn into json object
+        String json = "{\"gameID\":" + id + "}";
+        context.json(json);
 
     }
 
     private void joinGame(Context context) throws DataAccessException {
-        AuthData auth = new Gson().fromJson(context.header("authorization"), AuthData.class);
+        AuthData auth = new AuthData(context.header("authorization"), null);
 
 
 
