@@ -65,7 +65,9 @@ public class ChessService {
             GameData newGame = new GameData(gameId, game.whiteUsername(), authInfo.username(), game.gameName(), game.game());
             gameDAO.updateGame(newGame);
 
-        } else throw new DataAccessException("playerColor must be WHITE or BLACK");
+        } else {
+            throw new DataAccessException("playerColor must be WHITE or BLACK");
+        }
 
     }
 }
