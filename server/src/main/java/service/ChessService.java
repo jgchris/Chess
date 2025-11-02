@@ -11,10 +11,22 @@ import java.util.Objects;
 
 public class ChessService {
     //Change these to use SQL DAOs
-    private final AuthDAO authDAO = new MemoryAuthDAO();
-    private final GameDAO gameDAO = new MemoryGameDAO();
-    private final UserDAO userDAO = new MemoryUserDAO();
+    private final AuthDAO authDAO;
+    private final GameDAO gameDAO;
+    private final UserDAO userDAO;
     private int currentGameId = 1;
+
+    public ChessService() {
+        try {
+            DatabaseManager.createDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Database could not be created.", e);
+        }
+        authDAO = new MemoryAuthDAO();
+        gameDAO = new MemoryGameDAO();
+        userDAO = new MemoryUserDAO();
+
+    }
 
     private AuthData checkAuth(String token) throws DataAccessException {
         return authDAO.getAuth(token);
