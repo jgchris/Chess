@@ -52,16 +52,15 @@ public class DatabaseAuthDAO implements AuthDAO{
 
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
+        AuthData auth;
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("SELECT token, username FROM auth WHERE token=?")) {
                 preparedStatement.setString(1, authToken);
                 try (var rs = preparedStatement.executeQuery()) {
                     if (rs.next()) {
-                        var id = rs.getInt("id");
-                        var name = rs.getString("name");
-                        var type = rs.getString("type");
-
-                        System.out.printf("id: %d, name: %s, type: %s%n", id, name, type);
+                        var token = rs.getString("token");
+                        var user = rs.getString("username");
+                        auth = new AuthData(token, user);
                     } else {
                         throw new DataAccessException("Not authorized");
                     }
@@ -71,9 +70,21 @@ public class DatabaseAuthDAO implements AuthDAO{
         } catch (SQLException e) {
             throw new DataAccessException("Error getting auth token", e);
         }
+        return auth;
     }
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM auth WHERE token=?")) {
+                preparedStatement.setString(1, authToken);
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new DataAccessException("Auth token not found");
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Auth token not found");
+        }
     }
 }

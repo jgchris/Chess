@@ -6,6 +6,7 @@ import model.GameData;
 import model.UserData;
 import model.AuthData;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -22,9 +23,13 @@ public class ChessService {
         } catch (DataAccessException e) {
             throw new RuntimeException("Database could not be created.", e);
         }
-        authDAO = new MemoryAuthDAO();
-        gameDAO = new MemoryGameDAO();
-        userDAO = new MemoryUserDAO();
+        try {
+            authDAO = new DatabaseAuthDAO();
+            gameDAO = new MemoryGameDAO();
+            userDAO = new MemoryUserDAO();
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException("Could not create required tables in database");
+        }
 
     }
 
