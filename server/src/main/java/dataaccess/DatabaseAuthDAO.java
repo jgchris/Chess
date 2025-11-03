@@ -3,7 +3,6 @@ package dataaccess;
 import model.AuthData;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.UUID;
 
 public class DatabaseAuthDAO implements AuthDAO{
