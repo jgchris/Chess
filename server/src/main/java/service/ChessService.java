@@ -26,7 +26,7 @@ public class ChessService {
         try {
             authDAO = new DatabaseAuthDAO();
             gameDAO = new DatabaseGameDAO();
-            userDAO = new MemoryUserDAO();
+            userDAO = new DatabaseUserDAO();
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException("Could not create required tables in database");
         }

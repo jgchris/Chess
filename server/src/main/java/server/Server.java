@@ -116,6 +116,12 @@ public class Server {
             handle500(context, e.getMessage());
             return;
         }
+
+        if(Objects.equals(e.getMessage(), "SQL error") ||
+            Objects.equals(e.getMessage(), "failed to get connection")) {
+            handle500(context, e.getMessage());
+            return;
+        }
         if(Objects.equals(e.getMessage(), "Not authorized") ||
                 Objects.equals(e.getMessage(), "Auth token not found") ||
                 Objects.equals(e.getMessage(), "Incorrect username or password")) {
@@ -127,6 +133,7 @@ public class Server {
             handle400(context);
             return;
         }
+        System.out.println(e.getMessage());
         handle403(context);
 
     }

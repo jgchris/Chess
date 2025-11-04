@@ -67,7 +67,7 @@ public class DatabaseAuthDAO implements AuthDAO{
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error getting auth token", e);
+            throw new DataAccessException("SQL error", e);
         }
         return auth;
     }
@@ -83,7 +83,7 @@ public class DatabaseAuthDAO implements AuthDAO{
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Auth token not found");
+            throw new DataAccessException("SQL error");
         }
     }
 }
