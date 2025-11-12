@@ -11,7 +11,6 @@ public class LoggedOutMenu {
     public void loop() {
         while(true){
             String action = Menu.getInput(this.prompt);
-            System.out.println(action);
             if(Objects.equals(action, "help")){
                 help();
             } else if (Objects.equals(action, "quit")) {
