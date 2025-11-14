@@ -14,6 +14,7 @@ public class ServerFacadeTests {
     private static Server server;
     private static ServerFacade facade;
     private final UserData user = new UserData("test", "test1", "test@example.com");
+    private static int portNum;
 
     @BeforeAll
     public static void init() {
@@ -21,6 +22,7 @@ public class ServerFacadeTests {
         var port = server.run(0);
         facade = new ServerFacade(port);
         System.out.println("Started test HTTP server on " + port);
+        portNum = port;
     }
 
     @AfterAll
@@ -34,7 +36,7 @@ public class ServerFacadeTests {
         clear();
     }
     static void clear() {
-        var url = "http://localhost:8080/db";
+        var url = "http://localhost:" + portNum + "/db";
         facade.sendRequest(url, "DELETE", null, null);
     }
 
