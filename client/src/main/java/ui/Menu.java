@@ -58,22 +58,22 @@ public class Menu {
         out.print(RESET_TEXT_COLOR);
     }
     private static void drawBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color) {
-        final var LIGHT_COLOR = SET_BG_COLOR_LIGHT_GREY;
-        final var DARK_COLOR = SET_BG_COLOR_DARK_GREEN;
-        final var WHITE_PIECE_COLOR = SET_TEXT_COLOR_WHITE;
-        final var BLACK_PIECE_COLOR = SET_TEXT_COLOR_BLACK;
+        final var lightColor = SET_BG_COLOR_LIGHT_GREY;
+        final var darkColor = SET_BG_COLOR_DARK_GREEN;
+        final var whitePieceColor = SET_TEXT_COLOR_WHITE;
+        final var blackPieceColor = SET_TEXT_COLOR_BLACK;
 
         boolean white = color == ChessGame.TeamColor.WHITE;
         String topHeader = white ? " A  B  C  D  E  F  G  H " : " H  G  F  E  D  C  B  A";
         out.println("   " + topHeader);
-        var currentColor = LIGHT_COLOR;
+        var currentColor = lightColor;
         for (int i = 0; i< 8; i++) {
             int row = white ? 8-i : i+1;
             out.print(" " + row + " ");
             for (int j = 0; j< 8; j++) {
                 int col = white ? j+1 : 8-j;
                 out.print(currentColor);
-                currentColor = currentColor == LIGHT_COLOR ? DARK_COLOR : LIGHT_COLOR;
+                currentColor = currentColor == lightColor ? darkColor : lightColor;
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(position);
                 if (piece == null) {
@@ -81,7 +81,7 @@ public class Menu {
                     continue;
                 }
                 if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                    out.print(WHITE_PIECE_COLOR);
+                    out.print(whitePieceColor);
                     switch (piece.getPieceType()) {
                         case KING: out.print(WHITE_KING); break;
                         case QUEEN: out.print(WHITE_QUEEN); break;
@@ -92,7 +92,7 @@ public class Menu {
                     }
                     out.print(RESET_TEXT_COLOR);
                 } else {
-                    out.print(BLACK_PIECE_COLOR);
+                    out.print(blackPieceColor);
                     switch (piece.getPieceType()) {
                         case KING: out.print(BLACK_KING); break;
                         case QUEEN: out.print(BLACK_QUEEN); break;
@@ -109,7 +109,7 @@ public class Menu {
             }
             out.print(RESET_BG_COLOR);
             out.println();
-            currentColor = currentColor == LIGHT_COLOR ? DARK_COLOR : LIGHT_COLOR;
+            currentColor = currentColor == lightColor ? darkColor : lightColor;
         }
 
     }

@@ -7,7 +7,4 @@ public class ServerError extends Exception{
     public ServerError(String message) {
         super(message);
     }
-    public ServerError(String message, int status_code) {
-        super(String.format("%d: %s", status_code, message));
-    }
 }
