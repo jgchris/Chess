@@ -2,9 +2,13 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
-import java.util.Collection;
-import java.util.List;
+import static ui.EscapeSequences.*;
+
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +26,7 @@ public class Menu {
 
     public static String[] parseArgs(String args, String[] patterns, String errorMessage) {
         if (args == null) {
+            System.out.println(errorMessage);
             return null;
         }
         String[] arr = args.split(" ");
@@ -45,7 +50,66 @@ public class Menu {
 
     }
     public static void printBoard(ChessBoard board, ChessGame.TeamColor color) {
-        System.out.println("Hello I am a chessboard");
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        out.print(ERASE_SCREEN);
+        drawBoard(out, board, color);
+
+        out.print(RESET_BG_COLOR);
+        out.print(RESET_TEXT_COLOR);
+    }
+    private static void drawBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color) {
+        var LIGHT_COLOR = SET_BG_COLOR_LIGHT_GREY;
+        var DARK_COLOR = SET_BG_COLOR_DARK_GREY;
+        var WHITE_PIECE_COLOR = SET_TEXT_COLOR_WHITE;
+        var BLACK_PIECE_COLOR = SET_TEXT_COLOR_BLACK;
+        boolean white = color == ChessGame.TeamColor.WHITE;
+        String topHeader = white ? " A  B  C  D  E  F  G  H " : " H  G  F  E  D  C  B  A";
+        out.println("   " + topHeader);
+        var currentColor = LIGHT_COLOR;
+        for (int i = 0; i< 8; i++) {
+            int row = white ? i+1 : 8-i;
+            out.print(" " + row + " ");
+            for (int j = 0; j< 8; j++) {
+                int col = !white ? j+1 : 8-j;
+                out.print(currentColor);
+                currentColor = currentColor == LIGHT_COLOR ? DARK_COLOR : LIGHT_COLOR;
+                ChessPosition position = new ChessPosition(9-row, 9-col);
+                ChessPiece piece = board.getPiece(position);
+                if (piece == null) {
+                    out.print(EMPTY);
+                    continue;
+                }
+                if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                    out.print(WHITE_PIECE_COLOR);
+                    switch (piece.getPieceType()) {
+                        case KING: out.print(WHITE_KING); break;
+                        case QUEEN: out.print(WHITE_QUEEN); break;
+                        case BISHOP: out.print(WHITE_BISHOP); break;
+                        case KNIGHT: out.print(WHITE_KNIGHT); break;
+                        case ROOK: out.print(WHITE_ROOK); break;
+                        case PAWN: out.print(WHITE_PAWN); break;
+                    }
+                    out.print(RESET_TEXT_COLOR);
+                } else {
+                    out.print(BLACK_PIECE_COLOR);
+                    switch (piece.getPieceType()) {
+                        case KING: out.print(BLACK_KING); break;
+                        case QUEEN: out.print(BLACK_QUEEN); break;
+                        case BISHOP: out.print(BLACK_BISHOP); break;
+                        case KNIGHT: out.print(BLACK_KNIGHT); break;
+                        case ROOK: out.print(BLACK_ROOK); break;
+                        case PAWN: out.print(BLACK_PAWN); break;
+                    }
+                    out.print(RESET_TEXT_COLOR);
+
+                }
+
+
+            }
+            out.print(RESET_BG_COLOR);
+            out.println();
+            currentColor = currentColor == LIGHT_COLOR ? DARK_COLOR : LIGHT_COLOR;
+        }
 
     }
 }
