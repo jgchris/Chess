@@ -58,10 +58,10 @@ public class Menu {
         out.print(RESET_TEXT_COLOR);
     }
     private static void drawBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color) {
-        var LIGHT_COLOR = SET_BG_COLOR_LIGHT_GREY;
-        var DARK_COLOR = SET_BG_COLOR_DARK_GREEN;
-        var WHITE_PIECE_COLOR = SET_TEXT_COLOR_WHITE;
-        var BLACK_PIECE_COLOR = SET_TEXT_COLOR_BLACK;
+        final var LIGHT_COLOR = SET_BG_COLOR_LIGHT_GREY;
+        final var DARK_COLOR = SET_BG_COLOR_DARK_GREEN;
+        final var WHITE_PIECE_COLOR = SET_TEXT_COLOR_WHITE;
+        final var BLACK_PIECE_COLOR = SET_TEXT_COLOR_BLACK;
 
         boolean white = color == ChessGame.TeamColor.WHITE;
         String topHeader = white ? " A  B  C  D  E  F  G  H " : " H  G  F  E  D  C  B  A";
