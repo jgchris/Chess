@@ -97,8 +97,13 @@ public class LoggedInMenu {
             return;
         }
         String id = args[0];
+        if (clientIdsToServerIds == null) {
+            System.out.println("Game id not found (use list to get games)");
+            return;
+        }
+        Integer gameID = clientIdsToServerIds.get(Integer.parseInt(id));
         String playerColor = args[1];
-        startGame(playerColor, Integer.parseInt(id));
+        startGame(playerColor, gameID);
     }
     private void observe(String arguments) {
         String[] patterns = new String[] {"[1-9][0-9]*"};
@@ -107,11 +112,17 @@ public class LoggedInMenu {
             return;
         }
         String id = args[0];
+        if (clientIdsToServerIds == null) {
+            System.out.println("Game id not found (use list to get games)");
+            return;
+        }
+        Integer gameID = clientIdsToServerIds.get(Integer.parseInt(id));
+
         if (serverIdsToGames == null) {
             System.out.println("Game id not found (use list to get games)");
             return;
         }
-        GameData game =serverIdsToGames.get(id);
+        GameData game =serverIdsToGames.get(gameID);
         if (game == null){
             System.out.println("Game id not found (use list to get games)");
             return;
