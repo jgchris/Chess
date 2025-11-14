@@ -133,7 +133,6 @@ public class Server {
             handle400(context);
             return;
         }
-        System.out.println(e.getMessage());
         handle403(context);
 
     }
