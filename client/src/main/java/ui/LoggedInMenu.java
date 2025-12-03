@@ -85,7 +85,7 @@ public class LoggedInMenu {
             GameData game = games.get(i);
             clientToServer.put(i+1,game.gameID());
             serverToGame.put(game.gameID(), game);
-            System.out.println((i+1) + ": " + game.gameName());
+            System.out.println((i+1) + ": " + game.gameName() + "| WHITE: " + game.whiteUsername() + ", BLACK: " + game.blackUsername());
         }
         this.serverIdsToGames = serverToGame;
         this.clientIdsToServerIds = clientToServer;
@@ -102,6 +102,10 @@ public class LoggedInMenu {
             return;
         }
         Integer gameID = clientIdsToServerIds.get(Integer.parseInt(id));
+        if (gameID == null) {
+            System.out.println("Game id not found (use list to get games)");
+            return;
+        }
         String playerColor = args[1];
         startGame(playerColor, gameID);
     }
@@ -117,6 +121,10 @@ public class LoggedInMenu {
             return;
         }
         Integer gameID = clientIdsToServerIds.get(Integer.parseInt(id));
+        if (gameID == null) {
+            System.out.println("Game id not found (use list to get games)");
+            return;
+        }
 
         if (serverIdsToGames == null) {
             System.out.println("Game id not found (use list to get games)");

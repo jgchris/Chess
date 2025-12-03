@@ -110,7 +110,9 @@ public class ServerFacade {
         try {
             return this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            System.out.println("Could not connect to server.");
+            System.out.println("Make sure server is running on the correct port.");
+            return null;
         }
     }
     private HttpRequest.BodyPublisher requestBodyPublisher(String body) {

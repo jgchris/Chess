@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("♕ 240 Chess Client");
         System.out.println("Type help for options or quit to exit");
-        int port = 0;
+        int port = 8080;
         ServerFacade facade = new ServerFacade(port);
         LoggedOutMenu startMenu = new LoggedOutMenu("[CHESS (LOGGED OUT)]", facade);
         startMenu.loop();
