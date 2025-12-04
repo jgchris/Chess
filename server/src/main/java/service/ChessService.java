@@ -1,6 +1,8 @@
 package service;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.*;
 import model.GameData;
 import model.UserData;
@@ -86,5 +88,66 @@ public class ChessService {
             throw new DataAccessException("playerColor must be WHITE or BLACK");
         }
 
+    }
+    public void makeMove(AuthData auth, ChessMove move, int gameId) throws DataAccessException {
+        AuthData authInfo = checkAuth(auth.authToken());
+        String username = authInfo.username();
+        GameData game = gameDAO.getGame(gameId);
+        ChessGame chessGame = game.game();
+        ChessGame.TeamColor color =  checkPlayerColor(username, game);
+        ChessGame.TeamColor teamTurn = game.game().getTeamTurn();
+        ChessGame.TeamColor pieceColor;
+        try {
+            pieceColor = game.game().getBoard().getPiece(move.getStartPosition()).getTeamColor();
+        } catch (NullPointerException e) {
+            throw new DataAccessException("Error: Piece not found");
+        }
+        if (color != teamTurn) {
+            throw new DataAccessException("Error: Not your turn");
+        }
+        if (color != pieceColor) {
+            throw new DataAccessException("Error: Not your piece");
+        }
+        try {
+            chessGame.makeMove(move);
+        } catch (InvalidMoveException e) {
+            throw new DataAccessException("Error: Invalid move");
+        }
+        GameData newGame = new GameData(gameId, game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame);
+        gameDAO.updateGame(newGame);
+    }
+    public void resign(AuthData auth, int gameId) throws DataAccessException {
+        checkAuth(auth.authToken());
+        GameData game = gameDAO.getGame(gameId);
+        ChessGame chessGame = game.game();
+        chessGame.endGame();
+        GameData newGame = new GameData(gameId, game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame);
+        gameDAO.updateGame(newGame);
+    }
+    public void leaveGame(AuthData auth, int gameId) throws DataAccessException {
+        AuthData authInfo = checkAuth(auth.authToken());
+        GameData game = gameDAO.getGame(gameId);
+        String username = authInfo.username();
+        ChessGame.TeamColor color = checkPlayerColor(username, game);
+        if(color == ChessGame.TeamColor.WHITE) {
+            GameData newGame = new GameData(gameId, null, game.blackUsername(), game.gameName(), game.game());
+            gameDAO.updateGame(newGame);
+            return;
+        }
+        if(color == ChessGame.TeamColor.BLACK) {
+            GameData newGame = new GameData(gameId, game.whiteUsername(), null, game.gameName(), game.game());
+            gameDAO.updateGame(newGame);
+            return;
+        }
+    }
+    private ChessGame.TeamColor checkPlayerColor(String username, GameData game) throws DataAccessException {
+        String white = game.whiteUsername();
+        String black = game.blackUsername();
+        if (username == white) {
+            return ChessGame.TeamColor.WHITE;
+        } else if (username == black) {
+            return ChessGame.TeamColor.BLACK;
+        }
+        throw new DataAccessException("Error: Not a player in this game");
     }
 }
