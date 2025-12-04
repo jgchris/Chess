@@ -20,6 +20,7 @@ public class ChessGame {
     private HashMap<TeamColor, Boolean> canCastleQueenside = new HashMap<>();
     private ChessPosition canEnPassant;
 
+    private boolean gameOver = false;
 
     public ChessGame() {
         ChessBoard board = new ChessBoard();
@@ -35,6 +36,12 @@ public class ChessGame {
 
     }
 
+    public void endGame() {
+        gameOver = true;
+    }
+    public boolean isGameOver() {
+        return gameOver;
+    }
     /**
      * @return Which team's turn it is
      */
@@ -81,6 +88,9 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        if (gameOver) {
+            return null;
+        }
         ChessPiece possiblePiece = board.getPiece(startPosition);
         if(possiblePiece == null){
             return null;

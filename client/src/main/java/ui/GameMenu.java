@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPosition;
 import client.ServerFacade;
 import model.GameData;
@@ -81,7 +82,21 @@ public class GameMenu {
             System.out.println("Wait your turn");
             return;
         }
-
+        String command = Menu.getInput("Enter starting position >>> ");
+        ChessPosition startPos = ChessPosition.createPositionFromString(command);
+        if (startPos == null) {
+            System.out.println("Not a valid position. Use algebraic notation (eg. a1)");
+            return;
+        }
+        //TODO: check piece at position? Check promotion? Check if valid? Highlight moves?
+        command = Menu.getInput("Enter final position >>> ");
+        ChessPosition endPos = ChessPosition.createPositionFromString(command);
+        if (endPos == null) {
+            System.out.println("Not a valid position. Use algebraic notation (eg. a1)");
+            return;
+        }
+        //TODO: promotion lol
+        ChessMove move = new ChessMove(startPos, endPos, null);
     }
 
     private void redraw() {
