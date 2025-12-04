@@ -28,16 +28,7 @@ public class GameMenu {
     }
     public void loop() {
         while(true) {
-            String action = Menu.getInput(this.prompt);
-            int i = action.indexOf(" ");
-            String command;
-            String arguments = "";
-            if (i == -1) {
-                command = action;
-            } else {
-                command = action.substring(0, i);
-                arguments = action.substring(i+1);
-            }
+            String command = Menu.getInput(this.prompt);
             if (Objects.equals(command, "help")) {
                 help();
             } else if (Objects.equals(command, "leave")) {
@@ -62,7 +53,10 @@ public class GameMenu {
             System.out.println("Cannot resign as an observer");
             return;
         }
+        String command = Menu.getInput("Do you really want to resign? (y/n) >>> ");
+        if (command.equals("y")) {
 
+        }
     }
 
     private void highlight() {

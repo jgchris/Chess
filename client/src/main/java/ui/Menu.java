@@ -1,14 +1,14 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import static ui.EscapeSequences.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,17 +52,38 @@ public class Menu {
     public static void printBoard(ChessBoard board, ChessGame.TeamColor color) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
-        drawBoard(out, board, color);
+        drawBoard(out, board, color, null);
 
         out.print(RESET_BG_COLOR);
         out.print(RESET_TEXT_COLOR);
     }
-    private static void drawBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color) {
+    public static void printBoard(ChessBoard board, ChessGame.TeamColor color, ChessPosition highlightPos) {
+        ChessPiece piece = board.getPiece(highlightPos);
+        Collection<ChessMove> highlightMoves = piece.pieceMoves(board, highlightPos);
+        HashSet<ChessPosition> highlights= new HashSet<>();
+        highlights.add(highlightPos);
+        for (ChessMove move : highlightMoves) {
+            highlights.add(move.getEndPosition());
+        }
+
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        out.print(ERASE_SCREEN);
+        drawBoard(out, board, color, highlights);
+
+        out.print(RESET_BG_COLOR);
+        out.print(RESET_TEXT_COLOR);
+    }
+    private static void drawBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color, Collection<ChessPosition> highlights) {
         final var lightColor = SET_BG_COLOR_LIGHT_GREY;
         final var darkColor = SET_BG_COLOR_DARK_GREEN;
+        final var lightHighlightColor = SET_BG_COLOR_YELLOW;
+        final var darkHighlightColor = SET_BG_COLOR_MAGENTA;
         final var whitePieceColor = SET_TEXT_COLOR_WHITE;
         final var blackPieceColor = SET_TEXT_COLOR_BLACK;
 
+        if (highlights == null) {
+            highlights = new HashSet<>();
+        }
         boolean white = color == ChessGame.TeamColor.WHITE;
         String topHeader = white ? " A  B  C  D  E  F  G  H " : " H  G  F  E  D  C  B  A";
         out.println("   " + topHeader);
@@ -72,9 +93,13 @@ public class Menu {
             out.print(" " + row + " ");
             for (int j = 0; j< 8; j++) {
                 int col = white ? j+1 : 8-j;
-                out.print(currentColor);
-                currentColor = currentColor == lightColor ? darkColor : lightColor;
                 ChessPosition position = new ChessPosition(row, col);
+                if (highlights.contains(position)) {
+                    out.print(currentColor == lightColor ? lightHighlightColor : darkHighlightColor);
+                } else {
+                    out.print(currentColor);
+                }
+                currentColor = currentColor == lightColor ? darkColor : lightColor;
                 ChessPiece piece = board.getPiece(position);
                 if (piece == null) {
                     out.print(EMPTY);
