@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessPosition;
 import client.ServerFacade;
 import model.GameData;
 
@@ -60,7 +61,15 @@ public class GameMenu {
     }
 
     private void highlight() {
+        String command = Menu.getInput("Enter position to highlight >>> ");
 
+        ChessPosition highlightPos = ChessPosition.createPositionFromString(command);
+        if (highlightPos == null) {
+            System.out.println("Not a valid position. Use algebraic notation (eg. a1)");
+            return;
+        }
+
+        Menu.printBoard(game.getBoard(), this.color, highlightPos);
     }
 
     private void move() {

@@ -58,17 +58,21 @@ public class Menu {
         out.print(RESET_TEXT_COLOR);
     }
     public static void printBoard(ChessBoard board, ChessGame.TeamColor color, ChessPosition highlightPos) {
-        ChessPiece piece = board.getPiece(highlightPos);
-        Collection<ChessMove> highlightMoves = piece.pieceMoves(board, highlightPos);
-        HashSet<ChessPosition> highlights= new HashSet<>();
-        highlights.add(highlightPos);
-        for (ChessMove move : highlightMoves) {
-            highlights.add(move.getEndPosition());
-        }
-
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
-        drawBoard(out, board, color, highlights);
+
+        ChessPiece piece = board.getPiece(highlightPos);
+        if (piece != null) {
+            Collection<ChessMove> highlightMoves = piece.pieceMoves(board, highlightPos);
+            HashSet<ChessPosition> highlights = new HashSet<>();
+            highlights.add(highlightPos);
+            for (ChessMove move : highlightMoves) {
+                highlights.add(move.getEndPosition());
+            }
+            drawBoard(out, board, color, highlights);
+        }
+
+        drawBoard(out, board, color, null);
 
         out.print(RESET_BG_COLOR);
         out.print(RESET_TEXT_COLOR);
