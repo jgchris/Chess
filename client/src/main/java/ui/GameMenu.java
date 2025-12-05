@@ -14,7 +14,7 @@ public class GameMenu {
     private final String prompt;
     private final boolean observe;
     private final ChessGame.TeamColor color;
-    private final ChessGame game;
+    private ChessGame game;
     private final int gameId;
     private final ServerFacade facade;
     private final ServerMessageObserver observer;
@@ -31,15 +31,17 @@ public class GameMenu {
         this.game = game.game();
         this.gameId = game.gameID();
         this.facade = facade;
-        this.observer = new ServerMessageObserver();
+        this.observer = new ServerMessageObserver(color, this);
         facade.wsConnect(token, game.gameID(), this.observer);
         this.token = token;
-
     }
     public void loop() {
         label:
         while(true) {
             String command = observer.getInputNotificationSafe(this.prompt);
+            if(command==null) {
+                continue;
+            }
             switch (command) {
                 case "help":
                     help();
@@ -64,6 +66,7 @@ public class GameMenu {
             }
         }
         try {
+            observer.close();
             facade.leave(token, gameId);
         } catch (ServerError e) {
             System.out.println("WARNING: failed to leave game");
@@ -77,6 +80,9 @@ public class GameMenu {
             return;
         }
         String command = observer.getInputNotificationSafe("Do you really want to resign? (y/n)");
+        if(command==null) {
+            return;
+        }
         if (command.equals("y")) {
 
             try {
@@ -91,6 +97,9 @@ public class GameMenu {
 
     private void highlight() {
         String command = observer.getInputNotificationSafe("Enter position to highlight");
+        if(command == null) {
+            return;
+        }
 
         ChessPosition highlightPos = ChessPosition.createPositionFromString(command);
         if (highlightPos == null) {
@@ -111,6 +120,9 @@ public class GameMenu {
             return;
         }
         String command = observer.getInputNotificationSafe("Enter starting position");
+        if(command == null) {
+            return;
+        }
         ChessPosition startPos = ChessPosition.createPositionFromString(command);
         if (startPos == null) {
             System.out.println("Not a valid position. Use algebraic notation (eg. a1)");
@@ -118,6 +130,9 @@ public class GameMenu {
         }
         //TODO: check piece at position? Check promotion? Check if valid? Highlight moves?
         command = observer.getInputNotificationSafe("Enter final position");
+        if(command == null) {
+            return;
+        }
         ChessPosition endPos = ChessPosition.createPositionFromString(command);
         if (endPos == null) {
             System.out.println("Not a valid position. Use algebraic notation (eg. a1)");
@@ -144,5 +159,9 @@ public class GameMenu {
         System.out.println("resign — Forfeit the game");
         System.out.println("highlight — Highlight legal moves of a selected piece");
         System.out.println("help — Print this menu");
+    }
+
+    public void updateGame(GameData game) {
+        this.game = game.game();
     }
 }

@@ -135,9 +135,12 @@ public class LoggedInMenu {
             System.out.println("Game id not found (use list to get games)");
             return;
         }
-        Menu.printBoard(game.game().getBoard(), ChessGame.TeamColor.WHITE);
-
-        //TODO: enter observe mode
+        try {
+            GameMenu observerMenu = new GameMenu(true, null, game, facade, token);
+            observerMenu.loop();
+        } catch (ServerError e) {
+            System.out.println("Failed to connect to game");
+        }
 
     }
 
@@ -157,8 +160,12 @@ public class LoggedInMenu {
             System.out.println("Game id not found (use list to get games)");
             return;
         }
-        Menu.printBoard(game.game().getBoard(), ChessGame.TeamColor.valueOf(playerColor));
-        //TODO: enter game mode
+        try {
+            GameMenu playerMenu = new GameMenu(false, ChessGame.TeamColor.valueOf(playerColor), game, facade, token);
+            playerMenu.loop();
+        } catch (ServerError e) {
+            System.out.println("Failed to connect to game");
+        }
 
 
     }

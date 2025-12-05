@@ -1,5 +1,6 @@
 package server.websocket;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
@@ -30,14 +31,14 @@ public class GameHandler {
     public void connect(Session session, String token) {
         connections.add(session);
         String username;
-        boolean observer = true;
+        boolean observer = false;
         String playerColor = "";
         GameData game;
         try {
             username = service.getUsername(token);
             game = service.getGame(token, gameId);
             String color = service.getColorOrObserver(token, game);
-            if (color == "Observer") {
+            if (Objects.equals(color, "Observer")) {
                 observer = true;
             } else {
                 playerColor = color;
@@ -86,23 +87,51 @@ public class GameHandler {
             return;
         }
         String username = null;
+        String otherUsername = null;
+        ChessGame.TeamColor otherColor = null;
         try {
             username = service.getUsername(command.getAuthToken());
+            otherUsername = service.getUsername(command.getAuthToken());
         } catch (DataAccessException e) {
             sendError(session, e.getMessage());
             return;
         }
-        //TODO: check for checkmate, check, stalemate
+        String check = checkCheck(game.game(), otherColor);
+        ServerMessage checkNotification = null;
+        if (check != null) {
+            String checkMessage = otherUsername + " is in " + check;
+            checkNotification = new NotificationMessage(checkMessage);
+        }
         ServerMessage moveNotification = new LoadGameMessage(game);
-        ServerMessage notification = new NotificationMessage(username + " moved");
+        ServerMessage notification = new NotificationMessage(username + " moved " + move.toString());
         try {
             connections.broadcast(null, moveNotification);
+            if (checkNotification != null) {
+                connections.broadcast(null, checkNotification);
+            }
             connections.broadcast(session, notification);
         } catch (IOException e) {
             sendError(session, "Couldn't notify others of move");
         }
 
 
+    }
+    private String checkCheck(ChessGame game, ChessGame.TeamColor color) {
+        boolean Check = game.isInCheck(color);
+        if (Check) {
+            return "Check";
+        }
+        boolean Checkmate = game.isInCheckmate(color);
+        if (Checkmate) {
+            game.endGame();
+            return "Checkmate. Game over";
+        }
+        boolean Stalemate = game.isInStalemate(color);
+        if (Stalemate) {
+            game.endGame();
+            return "Stalemate. Game over";
+        }
+        return null;
     }
 
     public void resign(Session session, UserGameCommand command) {

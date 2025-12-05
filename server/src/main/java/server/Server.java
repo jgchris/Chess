@@ -118,6 +118,8 @@ public class Server {
     }
 
     private void exceptionHandler(Exception e, Context context) {
+        System.out.println("Error:");
+        System.out.println(e);
         if(!(e instanceof DataAccessException)){
             handle500(context, e.getMessage());
             return;

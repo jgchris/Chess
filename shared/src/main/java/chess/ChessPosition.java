@@ -60,8 +60,8 @@ public class ChessPosition {
         if(chars.length != 2) {
             return null;
         }
-        int col = chars[0] - 64;
-        int row = chars[1];
+        int col = chars[0] - 96;
+        int row = chars[1] - 48;
         if (col < 1 || col > 8 || row < 1 || row > 8) {
             return null;
         }

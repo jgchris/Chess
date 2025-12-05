@@ -20,9 +20,11 @@ import java.util.Map;
 public class ServerFacade {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final String prefixUrl;
+    private final String websocketUrl;
     private WsFacade wsFacade = null;
     public ServerFacade(int port) {
         prefixUrl = String.format("http://localhost:%d", port);
+        this.websocketUrl = String.format("ws://localhost:%d/ws", port);
     }
     public AuthData register(UserData user) throws ServerError {
         var body = new Gson().toJson(user);
@@ -128,9 +130,8 @@ public class ServerFacade {
     }
 
     public void wsConnect(String token, int gameId, ServerMessageObserver observer) throws ServerError{
-        var url = this.prefixUrl + "/ws";
         try {
-            this.wsFacade = new WsFacade(url, observer);
+            this.wsFacade = new WsFacade(websocketUrl, observer);
         } catch (Exception e) {
             throw new ServerError("Could not connect to Websocket");
         }
