@@ -91,7 +91,9 @@ public class GameHandler {
         ChessGame.TeamColor otherColor = null;
         try {
             username = service.getUsername(command.getAuthToken());
-            otherUsername = service.getUsername(command.getAuthToken());
+            otherColor = service.getOtherColor(command.getAuthToken(), gameId);
+            otherUsername = service.getColorUsername(command.getAuthToken(), gameId, otherColor);
+
         } catch (DataAccessException e) {
             sendError(session, e.getMessage());
             return;
@@ -117,17 +119,17 @@ public class GameHandler {
 
     }
     private String checkCheck(ChessGame game, ChessGame.TeamColor color) {
-        boolean Check = game.isInCheck(color);
-        if (Check) {
+        boolean check = game.isInCheck(color);
+        if (check) {
             return "Check";
         }
-        boolean Checkmate = game.isInCheckmate(color);
-        if (Checkmate) {
+        boolean checkmate = game.isInCheckmate(color);
+        if (checkmate) {
             game.endGame();
             return "Checkmate. Game over";
         }
-        boolean Stalemate = game.isInStalemate(color);
-        if (Stalemate) {
+        boolean stalemate = game.isInStalemate(color);
+        if (stalemate) {
             game.endGame();
             return "Stalemate. Game over";
         }

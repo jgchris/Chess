@@ -176,4 +176,23 @@ public class ChessService {
         checkAuth(token);
         return gameDAO.getGame(gameId);
     }
+    public String getColorUsername(String token, int gameId, ChessGame.TeamColor color) throws DataAccessException {
+        checkAuth(token).username();
+        GameData game = gameDAO.getGame(gameId);
+        if (color == ChessGame.TeamColor.WHITE) {
+            return game.whiteUsername();
+        }
+        if (color == ChessGame.TeamColor.BLACK) {
+            return game.blackUsername();
+        }
+        throw new DataAccessException("what");
+    }
+    public ChessGame.TeamColor getOtherColor(String token, int gameId) throws DataAccessException {
+        GameData game = gameDAO.getGame(gameId);
+        String myColor = getColorOrObserver(token, game);
+        if (Objects.equals(myColor, "WHITE")) {
+            return ChessGame.TeamColor.BLACK;
+        }
+        return ChessGame.TeamColor.WHITE;
+    }
 }
