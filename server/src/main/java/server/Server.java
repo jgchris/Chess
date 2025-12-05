@@ -8,6 +8,7 @@ import model.JoinRequest;
 import model.UserData;
 import model.GameData;
 import model.AuthData;
+import server.websocket.WsHandler;
 import service.ChessService;
 
 import java.security.Provider;
@@ -21,6 +22,7 @@ public class Server {
     public Server() {
 
         service = new ChessService();
+        WsHandler handler = new WsHandler(service);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
             .delete("/db", this::deleteDb)
@@ -30,6 +32,11 @@ public class Server {
             .get("/game", this::listGames)
             .post("/game", this::createGame)
             .put("/game", this::joinGame)
+            .ws("/ws", ws -> {
+                ws.onConnect(handler);
+                ws.onMessage(handler);
+                ws.onClose(handler);
+            })
             .exception(Exception.class, this::exceptionHandler);
     }
 

@@ -15,6 +15,7 @@ public class GameMenu {
     private final boolean observe;
     private final ChessGame.TeamColor color;
     private final ChessGame game;
+    private final int gameId;
     private final ServerFacade facade;
     private final ServerMessageObserver observer;
 
@@ -27,6 +28,7 @@ public class GameMenu {
             this.color = color;
         }
         this.game = game.game();
+        this.gameId = game.gameID();
         this.facade = facade;
         this.observer = new ServerMessageObserver();
         facade.wsConnect(token, game.gameID(), this.observer);
