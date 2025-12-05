@@ -118,8 +118,9 @@ public class ChessService {
         return newGame;
     }
     public void resign(AuthData auth, int gameId) throws DataAccessException {
-        checkAuth(auth.authToken());
+        AuthData authInfo = checkAuth(auth.authToken());
         GameData game = gameDAO.getGame(gameId);
+        ChessGame.TeamColor isPlayingGame = checkPlayerColor(authInfo.username(), game);
         ChessGame chessGame = game.game();
         chessGame.endGame();
         GameData newGame = new GameData(gameId, game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame);
@@ -153,5 +154,23 @@ public class ChessService {
     }
     public String getUsername(String token) throws DataAccessException {
         return checkAuth(token).username();
+    }
+    public String getColorOrObserver(String token, GameData game) throws DataAccessException {
+        AuthData authInfo = checkAuth(token);
+        String username = authInfo.username();
+        try {
+            ChessGame.TeamColor color = checkPlayerColor(username, game);
+            return switch (color) {
+                case WHITE -> "White";
+                case BLACK -> "Black";
+                case null, default -> "Observer";
+            };
+        } catch (DataAccessException e) {
+            return "Observer";
+        }
+    }
+    public GameData getGame(String token, int gameId) throws DataAccessException{
+        checkAuth(token);
+        return gameDAO.getGame(gameId);
     }
 }

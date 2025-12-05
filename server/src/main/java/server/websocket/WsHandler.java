@@ -54,6 +54,6 @@ public class WsHandler implements WsConnectHandler, WsMessageHandler, WsCloseHan
             handler = new GameHandler(gameId, this.service);
             idToHandler.put(gameId, handler);
         }
-        handler.connect(session);
+        handler.connect(session, command.getAuthToken());
     }
 }

@@ -26,8 +26,47 @@ public class GameHandler {
         this.connections = new ConnectionManager();
     }
 
-    public void connect(Session session) {
+    public void connect(Session session, String token) {
         connections.add(session);
+        String username;
+        boolean observer = true;
+        String playerColor = "";
+        GameData game;
+        try {
+            username = service.getUsername(token);
+            game = service.getGame(token, gameId);
+            String color = service.getColorOrObserver(token, game);
+            if (color == "Observer") {
+                observer = true;
+            } else {
+                playerColor = color;
+            }
+        } catch (DataAccessException e) {
+            sendError(session, e.getMessage());
+            return;
+        }
+        ServerMessage message = new LoadGameMessage(game);
+        String body = new Gson().toJson(message);
+        if (session.isOpen()) {
+            try {
+                session.getRemote().sendString(body);
+            } catch (IOException e) {
+                sendError(session, "Failed to send game information");
+            }
+        }
+        String notify;
+        if (observer) {
+            notify = username + " is now observing the game";
+        } else {
+            notify = username + " joined the game as " + playerColor;
+        }
+        ServerMessage connectMessage = new NotificationMessage(notify);
+        try {
+            connections.broadcast(session, connectMessage);
+        } catch (IOException e) {
+            sendError(session, "Failed to notify others");
+        }
+
     }
 
     public void makeMove(Session session, String commandJson) {

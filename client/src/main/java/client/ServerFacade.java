@@ -1,8 +1,10 @@
 package client;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import model.*;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
@@ -140,6 +142,43 @@ public class ServerFacade {
             throw new ServerError("Failure connecting to game");
         }
 
+    }
+
+    public void makeMove(String token, int gameId, ChessMove move) throws ServerError {
+        if (wsFacade == null) {
+            System.out.println("Connection lost. Try leaving and rejoining the game.");
+        }
+        UserGameCommand command = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, token, gameId, move);
+        String message = new Gson().toJson(command);
+        try {
+            wsFacade.send(message);
+        } catch (IOException e) {
+            throw new ServerError("Failed to make move");
+        }
+    }
+    public void resign(String token, int gameId) throws ServerError {
+        if (wsFacade == null) {
+            System.out.println("Connection lost. Try leaving and rejoining the game.");
+        }
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, token, gameId);
+        String message = new Gson().toJson(command);
+        try {
+            wsFacade.send(message);
+        } catch (IOException e) {
+            throw new ServerError("Failed to resign");
+        }
+    }
+    public void leave(String token, int gameId) throws ServerError{
+        if (wsFacade == null) {
+            System.out.println("Connection lost. Try leaving and rejoining the game.");
+        }
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, token, gameId);
+        String message = new Gson().toJson(command);
+        try {
+            wsFacade.send(message);
+        } catch (IOException e) {
+            throw new ServerError("Failed to leave game");
+        }
     }
 
 }
