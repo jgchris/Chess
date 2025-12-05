@@ -204,6 +204,10 @@ public class ChessGame {
 
         Collection<ChessMove> legalMoves = validMoves(start);
 
+        if (legalMoves == null) {
+            throw new InvalidMoveException();
+        }
+
         if(legalMoves.contains(move)){
             board.addPiece(start, null);
             ChessPiece.PieceType promotionPiece = move.getPromotionPiece();

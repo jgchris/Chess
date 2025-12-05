@@ -15,6 +15,7 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class GameHandler {
     private int gameId;
@@ -95,7 +96,7 @@ public class GameHandler {
         ServerMessage moveNotification = new LoadGameMessage(game);
         ServerMessage notification = new NotificationMessage(username + " moved");
         try {
-            connections.broadcast(session, moveNotification);
+            connections.broadcast(null, moveNotification);
             connections.broadcast(session, notification);
         } catch (IOException e) {
             sendError(session, "Couldn't notify others of move");
@@ -110,7 +111,7 @@ public class GameHandler {
             service.resign(auth, gameId);
             String username = service.getUsername(command.getAuthToken());
             ServerMessage notification = new NotificationMessage(username + " Resigned");
-            connections.broadcast(session, notification);
+            connections.broadcast(null, notification);
         } catch (DataAccessException e) {
             sendError(session, e.getMessage());
         } catch (IOException e) {
@@ -124,6 +125,24 @@ public class GameHandler {
         session.close();
         String token = command.getAuthToken();
         String username;
+        GameData game = null;
+        String color;
+        try {
+            game = service.getGame(token, gameId);
+            color = service.getColorOrObserver(token, game);
+        } catch (DataAccessException e) {
+            sendError(session, "Could not leave game");
+            return;
+        }
+        if (!Objects.equals(color, "Observer")) {
+            AuthData auth = new AuthData(token, null);
+            try {
+                service.leaveGame(auth, gameId);
+            } catch (DataAccessException e) {
+                sendError(session, "Could not leave game");
+                return;
+            }
+        }
         try {
             username = service.getUsername(token);
         } catch (DataAccessException e) {

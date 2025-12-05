@@ -122,6 +122,9 @@ public class ChessService {
         GameData game = gameDAO.getGame(gameId);
         ChessGame.TeamColor isPlayingGame = checkPlayerColor(authInfo.username(), game);
         ChessGame chessGame = game.game();
+        if (chessGame.isGameOver()) {
+            throw new DataAccessException("Game is already over");
+        }
         chessGame.endGame();
         GameData newGame = new GameData(gameId, game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame);
         gameDAO.updateGame(newGame);
@@ -145,12 +148,12 @@ public class ChessService {
     private ChessGame.TeamColor checkPlayerColor(String username, GameData game) throws DataAccessException {
         String white = game.whiteUsername();
         String black = game.blackUsername();
-        if (username == white) {
+        if (Objects.equals(username, white)) {
             return ChessGame.TeamColor.WHITE;
-        } else if (username == black) {
+        } else if (Objects.equals(username, black)) {
             return ChessGame.TeamColor.BLACK;
         }
-        throw new DataAccessException("Error: Not a player in this game");
+        throw new DataAccessException("Not a player in this game");
     }
     public String getUsername(String token) throws DataAccessException {
         return checkAuth(token).username();
