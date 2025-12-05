@@ -3,6 +3,7 @@ package client;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import model.*;
+import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -17,6 +18,7 @@ import java.util.Map;
 public class ServerFacade {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final String prefixUrl;
+    private WsFacade wsFacade = null;
     public ServerFacade(int port) {
         prefixUrl = String.format("http://localhost:%d", port);
     }
@@ -121,6 +123,23 @@ public class ServerFacade {
         } else {
             return HttpRequest.BodyPublishers.noBody();
         }
+    }
+
+    public void wsConnect(String token, int gameId, ServerMessageObserver observer) throws ServerError{
+        var url = this.prefixUrl + "/ws";
+        try {
+            this.wsFacade = new WsFacade(url, observer);
+        } catch (Exception e) {
+            throw new ServerError("Could not connect to Websocket");
+        }
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, token, gameId);
+        var body = new Gson().toJson(command);
+        try {
+            this.wsFacade.send(body);
+        } catch (IOException e) {
+            throw new ServerError("Failure connecting to game");
+        }
+
     }
 
 }

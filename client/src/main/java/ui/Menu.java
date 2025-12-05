@@ -7,7 +7,6 @@ import static ui.EscapeSequences.*;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -70,9 +69,9 @@ public class Menu {
                 highlights.add(move.getEndPosition());
             }
             drawBoard(out, board, color, highlights);
+        } else {
+            drawBoard(out, board, color, null);
         }
-
-        drawBoard(out, board, color, null);
 
         out.print(RESET_BG_COLOR);
         out.print(RESET_TEXT_COLOR);

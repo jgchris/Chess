@@ -3,7 +3,9 @@ package ui;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
+import client.ServerError;
 import client.ServerFacade;
+import client.ServerMessageObserver;
 import model.GameData;
 
 import java.util.Objects;
@@ -14,8 +16,9 @@ public class GameMenu {
     private final ChessGame.TeamColor color;
     private final ChessGame game;
     private final ServerFacade facade;
+    private final ServerMessageObserver observer;
 
-    public GameMenu(boolean observe, ChessGame.TeamColor color, GameData game, ServerFacade facade) {
+    public GameMenu(boolean observe, ChessGame.TeamColor color, GameData game, ServerFacade facade, String token) throws ServerError {
         this.prompt = "[CHESS (Playing " + game.gameName() + ")]";
         this.observe = observe;
         if (observe) {
@@ -25,8 +28,9 @@ public class GameMenu {
         }
         this.game = game.game();
         this.facade = facade;
-        //TODO: connect to websocket
-        //TODO: create ServerMessageObserver
+        this.observer = new ServerMessageObserver();
+        facade.wsConnect(token, game.gameID(), this.observer);
+
     }
     public void loop() {
         while(true) {
