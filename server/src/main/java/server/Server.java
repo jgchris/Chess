@@ -11,7 +11,6 @@ import model.AuthData;
 import server.websocket.WsHandler;
 import service.ChessService;
 
-import java.security.Provider;
 import java.util.Objects;
 
 public class Server {

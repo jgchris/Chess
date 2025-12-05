@@ -41,13 +41,19 @@ public class WsHandler implements WsConnectHandler, WsMessageHandler, WsCloseHan
             GameHandler.sendError(ctx.session,"Game not found; please send connect message to websocket");
         }
         switch (type) {
-            case LEAVE -> handler.leave(ctx.session);
-            case RESIGN -> handler.resign(ctx.session);
-            case MAKE_MOVE -> handler.makeMove(ctx.session);
+            case LEAVE -> handler.leave(ctx.session, command);
+            case RESIGN -> handler.resign(ctx.session, command);
+            case MAKE_MOVE -> handler.makeMove(ctx.session, command);
         }
     }
 
     private void connect(UserGameCommand command, Session session) {
-
+        int gameId = command.getGameID();
+        GameHandler handler = idToHandler.get(gameId);
+        if (handler == null) {
+            handler = new GameHandler(gameId, this.service);
+            idToHandler.put(gameId, handler);
+        }
+        handler.connect(session);
     }
 }

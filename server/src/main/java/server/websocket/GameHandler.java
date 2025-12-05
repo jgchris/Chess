@@ -1,8 +1,8 @@
 package server.websocket;
 
-import server.Server;
 import service.ChessService;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 public class GameHandler {
@@ -19,22 +19,22 @@ public class GameHandler {
         connections.add(session);
     }
 
-    public void makeMove(Session session) {
+    public void makeMove(Session session, UserGameCommand command) {
 
     }
 
-    public void resign(Session session) {
+    public void resign(Session session, UserGameCommand command) {
 
     }
 
-    public void leave(Session session) {
+    public void leave(Session session, UserGameCommand command) {
+        connections.remove(session);
 
+        connections.broadcast(session, );
+        session.close();
     }
 
     public static void sendError(Session session, String errorMessage) {
-
-    }
-    public static void sendMessage(Session session, ServerMessage message) {
 
     }
 }
