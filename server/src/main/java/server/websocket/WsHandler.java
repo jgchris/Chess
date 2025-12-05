@@ -43,7 +43,7 @@ public class WsHandler implements WsConnectHandler, WsMessageHandler, WsCloseHan
         switch (type) {
             case LEAVE -> handler.leave(ctx.session, command);
             case RESIGN -> handler.resign(ctx.session, command);
-            case MAKE_MOVE -> handler.makeMove(ctx.session, command);
+            case MAKE_MOVE -> handler.makeMove(ctx.session, ctx.message());
         }
     }
 

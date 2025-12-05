@@ -89,7 +89,7 @@ public class ChessService {
         }
 
     }
-    public void makeMove(AuthData auth, ChessMove move, int gameId) throws DataAccessException {
+    public GameData makeMove(AuthData auth, ChessMove move, int gameId) throws DataAccessException {
         AuthData authInfo = checkAuth(auth.authToken());
         String username = authInfo.username();
         GameData game = gameDAO.getGame(gameId);
@@ -100,21 +100,22 @@ public class ChessService {
         try {
             pieceColor = game.game().getBoard().getPiece(move.getStartPosition()).getTeamColor();
         } catch (NullPointerException e) {
-            throw new DataAccessException("Error: Piece not found");
+            throw new DataAccessException("Piece not found");
         }
         if (color != teamTurn) {
-            throw new DataAccessException("Error: Not your turn");
+            throw new DataAccessException("Not your turn");
         }
         if (color != pieceColor) {
-            throw new DataAccessException("Error: Not your piece");
+            throw new DataAccessException("Not your piece");
         }
         try {
             chessGame.makeMove(move);
         } catch (InvalidMoveException e) {
-            throw new DataAccessException("Error: Invalid move");
+            throw new DataAccessException("Invalid move");
         }
         GameData newGame = new GameData(gameId, game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame);
         gameDAO.updateGame(newGame);
+        return newGame;
     }
     public void resign(AuthData auth, int gameId) throws DataAccessException {
         checkAuth(auth.authToken());
@@ -149,5 +150,8 @@ public class ChessService {
             return ChessGame.TeamColor.BLACK;
         }
         throw new DataAccessException("Error: Not a player in this game");
+    }
+    public String getUsername(String token) throws DataAccessException {
+        return checkAuth(token).username();
     }
 }

@@ -36,7 +36,7 @@ public class GameMenu {
     }
     public void loop() {
         while(true) {
-            String command = Menu.getInput(this.prompt);
+            String command = observer.getInputNotificationSafe(this.prompt);
             if (Objects.equals(command, "help")) {
                 help();
             } else if (Objects.equals(command, "leave")) {
@@ -61,14 +61,14 @@ public class GameMenu {
             System.out.println("Cannot resign as an observer");
             return;
         }
-        String command = Menu.getInput("Do you really want to resign? (y/n) >>> ");
+        String command = observer.getInputNotificationSafe("Do you really want to resign? (y/n) >>> ");
         if (command.equals("y")) {
 
         }
     }
 
     private void highlight() {
-        String command = Menu.getInput("Enter position to highlight >>> ");
+        String command = observer.getInputNotificationSafe("Enter position to highlight >>> ");
 
         ChessPosition highlightPos = ChessPosition.createPositionFromString(command);
         if (highlightPos == null) {
@@ -88,14 +88,14 @@ public class GameMenu {
             System.out.println("Wait your turn");
             return;
         }
-        String command = Menu.getInput("Enter starting position >>> ");
+        String command = observer.getInputNotificationSafe("Enter starting position >>> ");
         ChessPosition startPos = ChessPosition.createPositionFromString(command);
         if (startPos == null) {
             System.out.println("Not a valid position. Use algebraic notation (eg. a1)");
             return;
         }
         //TODO: check piece at position? Check promotion? Check if valid? Highlight moves?
-        command = Menu.getInput("Enter final position >>> ");
+        command = observer.getInputNotificationSafe("Enter final position >>> ");
         ChessPosition endPos = ChessPosition.createPositionFromString(command);
         if (endPos == null) {
             System.out.println("Not a valid position. Use algebraic notation (eg. a1)");
